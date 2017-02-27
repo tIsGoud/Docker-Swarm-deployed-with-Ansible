@@ -1,0 +1,5 @@
+---
+# Shutdown the visualization container
+
+- include: teardownSwarmVisualizationContainer.yml
+  when: not platform[architecture]['skip_swarm_visualization']

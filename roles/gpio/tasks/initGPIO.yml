@@ -1,0 +1,16 @@
+---
+# Setup the GPIO pin through bash CLI commands
+# This playbook expects the variable "gpioPin"
+# representing the GPIO pin number on the Raspberry Pi
+
+# Load the GPIO variables
+- include_vars: "vars/gpio.yml"
+
+# Call initGPIO for each pin
+- include: initGPIOpin.yml gpioPin={{ red.gpioPin }}
+- include: initGPIOpin.yml gpioPin={{ green.gpioPin }}
+- include: initGPIOpin.yml gpioPin={{ blue.gpioPin }}
+
+# Turn the red led on
+- name: Turn the red led on
+  shell: "{{ led.red }}"

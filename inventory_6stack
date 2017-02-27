@@ -1,0 +1,21 @@
+# Inventory file for testing things on my six-node Raspbery Pi cluster
+
+[swarmManagers]
+blacknode.local
+
+#[additionalSwarmManagers]
+
+[swarmNodes]
+greennode.local
+rednode.local
+pinknode.local
+yellownode.local
+whitenode.local
+
+[swarm:children]
+swarmManagers
+swarmNodes
+
+[swarm:vars]
+# The SSH user to login, Hypriot image => pirate
+ansible_user=pirate

@@ -1,0 +1,11 @@
+---
+# Start the webpages of the running swarm services
+
+- name: Open visualizer webpage
+  command: "open http://{{ hostvars[groups['swarmManagers'][0]]['inventory_hostname'] }}:8080"
+
+- name: Open busybox webpage
+  command: "open http://{{ hostvars[groups['swarmManagers'][0]]['docker_manager_address'] }}:8081"
+
+- name: Open whoami webpage
+  command: "open http://{{ hostvars[groups['swarmManagers'][0]]['docker_manager_address'] }}:8082"

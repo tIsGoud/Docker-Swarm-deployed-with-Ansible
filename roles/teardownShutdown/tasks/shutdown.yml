@@ -1,0 +1,9 @@
+---
+# Fire and forget to shutdown the Raspberry Pi devices
+# also works fine on virtual machines ...
+
+# Shutdown the device
+- name: Shutdown the device
+  command: shutdown -h now
+  async: 10
+  poll: 0

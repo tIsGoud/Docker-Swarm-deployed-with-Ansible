@@ -1,0 +1,9 @@
+---
+# Reset the GPIO pin through bash CLI commands
+# This playbook expects the variable "gpioPin"
+# representing the GPIO pin number on the Raspberry Pi
+
+# Call teardownGPIOpin for each pin
+- include: teardownGPIOpin.yml gpioPin={{ red.gpioPin }}
+- include: teardownGPIOpin.yml gpioPin={{ green.gpioPin }}
+- include: teardownGPIOpin.yml gpioPin={{ blue.gpioPin }}

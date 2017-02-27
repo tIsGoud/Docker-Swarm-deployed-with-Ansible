@@ -1,0 +1,5 @@
+---
+# Initiate the shutdown of all machines
+
+- include: shutdown.yml
+  when: not platform[architecture]['skip_shutdown']  

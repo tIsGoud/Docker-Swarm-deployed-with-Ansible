@@ -1,0 +1,14 @@
+---
+
+- name: Get "docker info"
+  command: docker info
+  register: docker_info
+  changed_when: false
+
+- name: Check if it is part of a swarm & Join the worker-node to the swarm
+  command: docker swarm join --token {{ hostvars[groups['swarmManagers'][0]]['docker_worker_token']['stdout'] }} {{ hostvars[groups['swarmManagers'][0]]['docker_manager_address'] }}:{{ platform[architecture]['docker_swarm_port'] }}
+  when: "docker_info.stdout.find('Swarm: active') == -1"
+
+- name: Turn the green led on
+  shell: "{{ led.green }}"
+  when: not platform[architecture]['skip_gpio']

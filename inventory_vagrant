@@ -1,0 +1,18 @@
+# Inventory file for testing things with Vagrant on my laptop
+
+[swarmManagers]
+machine1
+
+# [additionalSwarmManagers]
+
+[swarmNodes]
+machine2
+machine3
+
+[swarm:children]
+swarmManagers
+swarmNodes
+
+[swarm:vars]
+# The SSH user to login, virtual machines are deployed with Vagrant
+ansible_user=vagrant

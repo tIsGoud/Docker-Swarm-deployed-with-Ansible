@@ -1,0 +1,5 @@
+---
+# Reset the GPIO pins on the Raspberry Pi board
+
+- include: teardownGPIO.yml
+  when: not platform[architecture]['skip_gpio']

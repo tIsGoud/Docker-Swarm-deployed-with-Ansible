@@ -1,0 +1,41 @@
+---
+# This playbook tearsdown the whole swarm configuration
+
+# Determine the processor architecture of the machines defined in the inventory
+- name: Determine the processor of the target platform
+  hosts: all
+  tasks:
+    - set_fact: architecture="{{ ((ansible_architecture|truncate(3,true,'')) == 'arm') | ternary('ARM','X86') }}"
+
+# Load the GPIO specific variables:
+- name: Load the GPIO specific variables
+  hosts: all
+  tasks:
+    - include_vars: "roles/gpio/vars/gpio.yml"
+
+# Teardown all services
+- hosts: swarmManagers[0]
+  become: true
+  roles:
+    - teardownSwarmServices
+
+# Swarmnodes and swarm manager functions can change during runtime by promotion and demotion.
+# Therefore we run this against all nodes and check the characteristics of the machines.
+- hosts: all
+  become: true
+  roles:
+    - teardownSwarmNodes
+    - teardownSwarmManager
+
+# Teardown the visualization container
+- hosts: swarmManagers[0]
+  become: true
+  roles:
+    - teardownSwarmVisualization
+
+# Reset GPIO & shutdown the machines
+- hosts: all
+  become: true
+  roles:
+    - teardownGPIO
+    - teardownShutdown

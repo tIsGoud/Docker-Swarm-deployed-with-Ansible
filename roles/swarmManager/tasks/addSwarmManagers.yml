@@ -1,0 +1,10 @@
+---
+- name: Add the manager nodes to the swarm
+
+- name: Join the manager node to the swarm
+  command: docker swarm join --token {{ hostvars[groups['swarmManagers'][0]]['managerToken']['stdout'] }} {{ hostvars[groups['swarmManagers'][0]]['ansible_eth0']['ipv4']['address'] }}:2377
+  register: result
+- debug: msg="{{ result.stdout }}"
+
+#- name: Turn the blue led on
+#  shell: "{{ led.blue }}"

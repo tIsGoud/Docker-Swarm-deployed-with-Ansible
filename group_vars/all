@@ -1,0 +1,68 @@
+---
+# Variables here are applicable to all host groups including the localhost (127.0.0.1)
+# Raspberry Pi specific version
+
+platform:
+  ARM:
+    # Switches disabling parts of the system or workflow
+    skip_gpio: false  # on Raspberry Pi the GPIO pins are used to control the RGB-led
+    skip_swarm_visualization: false  # start the visualization container on the first docker manager
+    skip_swarm: false # start the swarm
+    skip_swarm_nodes: false # start the swarm nodes
+    skip_swarm_services: false # start the swarm services
+    skip_monitoring: false # start the local web browser displaying the swarm visualization and the services
+    skip_shutdown: false # shutdown the Raspberry Pi devices
+
+    # Docker Swarm variables for ARM
+    docker_swarm_address: "{{ ansible_default_ipv4['address'] }}"
+    docker_swarm_port: 2377
+
+    # Docker Swarm visualization image for ARM
+    docker_swarm_visualization_image: "alexellis2/visualizer-arm"
+
+    # Docker Swarm services for ARM
+    docker_swarm_services:
+      busybox:
+        name: "busybox"
+        service_port: 80
+        published_port: 8081
+        image: "hypriot/rpi-busybox-httpd:latest"
+        instances_per_node: 2
+      whoami:
+        name: "whoami"
+        service_port: 8000
+        published_port: 8082
+        image: hypriot/rpi-whoami:latest
+        instances_per_node: 2
+  X86:
+    # Switches disabling parts of the system or workflow
+    skip_gpio: true  # allways true on X86, this is Raspberry Pi specific
+    skip_swarm_visualization: false  # start the visualization container on the first docker manager
+    skip_swarm: false # start the swarm
+    skip_swarm_nodes: false # start the swarm nodes
+    skip_swarm_services: false # start the swarm services
+    skip_monitoring: false # start the local web browser displaying the swarm visualization and the services
+    skip_shutdown: true # allways true on X86, do not shutdown the VMs. Use "vagrant halt" to stop the machines
+
+    # Docker Swarm variables for X86
+    # Fixed IPv4 address, configured in the Vagrantfile
+    docker_swarm_address: "192.168.99.100"
+    docker_swarm_port: 2377
+
+    # Docker Swarm visualization image for X86
+    docker_swarm_visualization_image: "manomarks/visualizer"
+
+    # Docker Swarm services for X86
+    docker_swarm_services:
+      httpd:
+        name: "httpd"
+        service_port: 8080
+        published_port: 8081
+        image: "httpd:latest"
+        instances_per_node: 2
+      static-go:
+        name: "static-go"
+        service_port: 8080
+        published_port: 8082
+        image: "treeder/static-go:latest"
+        instances_per_node: 2

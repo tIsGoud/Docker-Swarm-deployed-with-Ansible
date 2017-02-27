@@ -1,0 +1,5 @@
+---
+# Set up the initial swarm manager
+
+- include: initializeSwarm.yml
+  when: not platform[architecture]['skip_swarm']

@@ -1,0 +1,11 @@
+---
+# Run a docker image to visualize the cluster
+
+- name: Check if the visualization container is running
+  command: docker ps
+  register: docker_ps
+  changed_when: false
+
+- name: Start visualization container
+  command: docker run -it -d -p 8080:8080 -e HOST={{ ansible_nodename }} -v /var/run/docker.sock:/var/run/docker.sock {{ platform[architecture]['docker_swarm_visualization_image'] }}:latest
+  when: "docker_ps.stdout.find('{{ platform[architecture]['docker_swarm_visualization_image'] }}') == -1"

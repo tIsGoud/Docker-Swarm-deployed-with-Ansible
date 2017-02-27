@@ -1,0 +1,46 @@
+---
+# This playbook deploys the swarm configuration on multiple Docker hosts
+
+# Determine the processor architecture of the machines defined in the inventory
+- name: Determine the processor of the target platform
+  hosts: all
+  tasks:
+    - set_fact: architecture="{{ ((ansible_architecture|truncate(3,true,'')) == 'arm') | ternary('ARM','X86') }}"
+
+- hosts: all
+  tasks:
+    - debug: msg="architecture is set to {{ architecture }}"
+
+# Apply common configuration to all hosts
+- hosts: swarm
+  become: true
+  roles:
+    - common
+    - gpio
+
+# Deploy the visualization container on the first Swarm Manager
+- hosts: swarmManagers[0]
+  become: true
+  roles:
+    - swarmVisualization
+    - swarmManager
+
+# Deploy the Swarm Nodes
+- hosts: swarmNodes
+  become: true
+  roles:
+    - swarmNode
+
+# Todo: add the additional Swarm managers that are define in the inventory file
+
+# Deploy the swarm services
+- hosts: swarmManagers[0]
+  become: true
+  roles:
+    - swarmServices
+
+# Open the swarm visualization page and the running services in a browser on the localhost
+- hosts: localhost
+  connection: local
+  roles:
+    - monitoring

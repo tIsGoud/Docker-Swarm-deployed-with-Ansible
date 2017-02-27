@@ -1,0 +1,5 @@
+---
+# Start the services on the swarm cluster
+
+- include: startServices.yml
+  when: not platform[architecture]['skip_swarm_services']

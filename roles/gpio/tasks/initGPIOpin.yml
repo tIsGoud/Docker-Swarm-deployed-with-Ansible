@@ -1,0 +1,21 @@
+---
+# Setup the GPIO pin through bash CLI commands
+# This playbook expects the variable "gpioPin"
+# representing the GPIO pin number on the Raspberry Pi
+
+- name: Register the path to the symlink
+  stat: "path=/sys/class/gpio/gpio{{ gpioPin }}"
+  register: sym
+
+- name: Initialize the GPIO port
+  shell: echo "{{ gpioPin }}" > /sys/class/gpio/export
+  when: sym.stat.islnk is not defined
+
+- name: Register the cat output
+  shell: cat /sys/class/gpio/gpio{{ gpioPin }}/direction
+  register: cat
+  changed_when: false
+
+- name: Set the GPIO port direction to output
+  shell: echo "out" > /sys/class/gpio/gpio{{ gpioPin }}/direction
+  when: cat.stdout != "out"

@@ -1,0 +1,34 @@
+---
+# Stop the running swarm services
+
+- name: Get "docker info"
+  command: docker info
+  register: docker_info
+  changed_when: false
+
+- name: Get "docker node ps self"
+  command: docker node ps self
+  register: docker_node_ps
+  changed_when: false
+  when: "docker_info.stdout.find('Swarm: active') != -1
+    and docker_info.stdout.find('Is Manager: true') != -1"
+
+#  shell: docker node ps self | awk '{if(NR>1)print}' | awk '{print substr($2, 1, match($2, ".[0-9]")-1)}'
+- name: Get a list of running services
+  shell: docker service ls | awk '{if(NR>1)print}' | awk '{print $2}'
+  register: docker_service_ls_awk
+  changed_when: false
+  when: "docker_info.stdout.find('Swarm: active') != -1
+    and docker_info.stdout.find('Is Manager: true') != -1"
+
+- name: Set the number of service replicas to 0
+  command: docker service update {{ item }} --replicas 0
+  with_items: "{{ docker_service_ls_awk.stdout_lines | default({}) }}"
+  when: "docker_info.stdout.find('Swarm: active') != -1
+    and docker_info.stdout.find('Is Manager: true') != -1"
+
+- name: Stop the running service
+  command: docker service rm {{ item }}
+  with_items: "{{ docker_service_ls_awk.stdout_lines | default({}) }}"
+  when: "docker_info.stdout.find('Swarm: active') != -1
+    and docker_info.stdout.find('Is Manager: true') != -1"

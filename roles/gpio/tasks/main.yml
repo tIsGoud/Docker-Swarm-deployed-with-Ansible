@@ -1,0 +1,5 @@
+---
+# Setup the GPIO pins through bash CLI commands
+
+- include: initGPIO.yml
+  when: not platform[architecture]['skip_gpio']

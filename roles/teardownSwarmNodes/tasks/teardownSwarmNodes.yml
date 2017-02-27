@@ -1,0 +1,17 @@
+---
+# Teardown the swarm node
+
+- name: Get "docker info"
+  command: docker info
+  register: docker_info
+  changed_when: false
+
+# On a node part of a swarm, "Swarm: active" and "Is Manager: false"
+- name: Check if it is a swarm node & Leave the swarm
+  command: docker swarm leave
+  when: "docker_info.stdout.find('Swarm: active') != -1
+    and docker_info.stdout.find('Is Manager: false') != -1"
+
+- name: Turn the red led on
+  shell: "{{ led.red }}"
+  when: not platform[architecture]['skip_gpio']

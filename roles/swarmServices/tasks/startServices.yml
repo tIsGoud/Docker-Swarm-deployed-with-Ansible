@@ -1,0 +1,28 @@
+---
+# Start the services on the swarm cluster
+
+- name: Get "docker info"
+  command: docker info
+  register: docker_info
+  changed_when: false
+
+- name: Get "docker node ps"
+  command: docker node ps self
+  register: docker_node_ps
+  changed_when: false
+  when: "docker_info.stdout.find('Swarm: active') != -1"
+
+- name: Start the services
+  command: docker service create --name {{ item.key }} -p {{ item.value.published_port }}:{{ item.value.service_port }} {{ item.value.image }}
+  with_dict: "{{ platform[architecture]['docker_swarm_services'] }}"
+  when: "platform[architecture]['docker_swarm_services'] is not undefined
+    and docker_node_ps.stdout.find('{{ item.value.image }}') == -1
+    and docker_info.stdout.find('Swarm: active') != -1"
+
+- name: Set the number of replicas per node
+  command: docker service update {{ item.key }} --replicas {{ (groups['swarm'] | length) *  item.value.instances_per_node }}
+  with_dict: "{{ platform[architecture]['docker_swarm_services'] }}"
+  when: "platform[architecture]['docker_swarm_services'] is not undefined
+    and {{ item.value.instances_per_node }} >= 1
+    and docker_node_ps.stdout.find('{{ item.value.image }}') == -1
+    and docker_info.stdout.find('Swarm: active') != -1"

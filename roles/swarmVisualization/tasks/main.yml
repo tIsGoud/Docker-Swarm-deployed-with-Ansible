@@ -1,0 +1,5 @@
+---
+# Set up the visualization container
+
+- include: visualizationContainer.yml
+  when: not platform[architecture]['skip_swarm_visualization']

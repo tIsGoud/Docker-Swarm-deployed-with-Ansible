@@ -1,0 +1,32 @@
+---
+# Initialize the swarm and get the swarm tokens
+
+- name: Get "docker info"
+  command: docker info
+  register: docker_info
+  changed_when: false
+
+- name: Check if "Swarm Mode" is enabled & Initialize the swarm
+  command: docker swarm init
+          --listen-addr {{ platform[architecture]['docker_swarm_address'] }}:{{ platform[architecture]['docker_swarm_port'] }}
+          --advertise-addr {{ platform[architecture]['docker_swarm_address'] }}
+  when: "docker_info.stdout.find('Swarm: active') == -1"
+
+- name: Declare the address of the first Swarm Manager as a fact
+  set_fact:
+    docker_manager_address: "{{ platform[architecture]['docker_swarm_address'] }}"
+  changed_when: false
+
+- name: Retrieve worker token from swarm manager
+  command: docker swarm join-token -q worker
+  register: docker_worker_token
+  changed_when: false
+
+- name: Retrieve manager token from swarm manager
+  command: docker swarm join-token -q manager
+  register: docker_manager_token
+  changed_when: false
+
+- name: Turn the blue led on
+  shell: "{{ led.blue }}"
+  when: not platform[architecture]['skip_gpio']

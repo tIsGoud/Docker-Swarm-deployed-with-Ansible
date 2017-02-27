@@ -1,0 +1,5 @@
+---
+# Set up the swarm node
+
+- include: initializeNode.yml
+  when: not platform[architecture]['skip_swarm_nodes']

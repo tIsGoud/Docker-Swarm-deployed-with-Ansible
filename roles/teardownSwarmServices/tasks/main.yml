@@ -1,0 +1,4 @@
+---
+# Stop the running swarm services
+
+- include: stopServices.yml

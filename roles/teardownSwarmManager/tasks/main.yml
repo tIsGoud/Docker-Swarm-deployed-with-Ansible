@@ -1,0 +1,4 @@
+---
+# Teardown the swarm manager
+
+- include: teardownSwarmManager.yml

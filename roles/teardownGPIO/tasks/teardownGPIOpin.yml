@@ -1,0 +1,12 @@
+---
+# Reset the GPIO pin through bash CLI commands
+# This playbook expects the variable "gpioPin"
+# representing the GPIO pin number on the Raspberry Pi
+
+- name: Register the path to the symlink
+  stat: "path=/sys/class/gpio/gpio{{ gpioPin }}"
+  register: sym
+
+- name: DeRegister the destination symlink
+  shell: echo "{{ gpioPin }}" > /sys/class/gpio/unexport
+  when: sym.stat.islnk is defined

@@ -1,0 +1,8 @@
+---
+# Start the webpages of the running swarm services
+# This will be running on the localhost therefore we have to retrieve the
+# platform specific settings from one of the other hosts.
+
+- include: openWebPages.yml
+  # when: not skip_swarm_services
+  when: not hostvars[groups['swarmManagers'][0]]['platform'][hostvars[groups['swarmManagers'][0]]['architecture']]['skip_swarm_services']

@@ -1,0 +1,4 @@
+---
+# Teardown the swarm nodes
+
+- include: teardownSwarmNodes.yml

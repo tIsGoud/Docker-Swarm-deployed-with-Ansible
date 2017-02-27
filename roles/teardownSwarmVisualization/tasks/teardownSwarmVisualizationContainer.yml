@@ -1,0 +1,11 @@
+---
+# Shutdown the visualization container
+
+- name: Get "docker ps"
+  command: docker ps
+  register: docker_ps
+  changed_when: false
+
+- name: Stop the visualization container
+  shell: docker stop $(docker ps | grep {{ platform[architecture]['docker_swarm_visualization_image'] }} | awk '{print $1}')
+  when: "docker_ps.stdout.find('{{ platform[architecture]['docker_swarm_visualization_image'] }}') != -1"
