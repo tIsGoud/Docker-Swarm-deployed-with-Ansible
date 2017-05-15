@@ -8,7 +8,9 @@
 redLedPin: "22"
 greenLedPin: "27"
 blueLedPin: "17"
-# If you have a Common Anode RGB led, change ledOn to "0" and ledOff to "1"
+# Change the values of ledOn and ledOff for the type of led:
+# Common Cathode RGB led, ledOn: "1" and ledOff: "0"
+# Common Anode RGB led, ledOn: "0" and ledOff: "1"
 ledOn: "1"
 ledOff: "0"
 
